@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title> KATARZYNA DAM - projekt z przedmiotu interfejs graficzny </title>
+
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+	
+	<meta name="viewport" content="width=620, height=480">
+	
+	<script src="math.js" type="text/javascript"></script>
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+	<meta name="author" content="Katarzyna (Kate) Dam">
+	
+	<link href="https://fonts.googleapis.com/css?family=Comfortaa|Lobster|Pacifico" rel="stylesheet">
+	
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" >
+</head>
+
+<body>
+
+<center><div class="cont">
+
+<div class="boxx">
+<center> <img src="static/logo2.png"/>  </center> </div>
+
+<div class="box11">
+<p><a href="#about"> # ABOUT </a></p>
+</div>
+
+
+<div class="box">
+<p> Please enter a number : </p>
+</div>
+
+<div class="box2">
+<p> Select the type of unity : </p>
+</div>
+
+<div class="box3">
+<p> Select unity : </p>
+</div>
+
+<div class="boxx1">
+	<select id="units_from"></select>
+</div>
+
+<div class="boxx2">
+	<select id="units_to"></select>
+</div>
+
+<div class="box4">
+<p> Select target unity : </p>
+</div>
+
+<div class="box10">
+<p> Result : </p>
+</div>
+
+<div class="box9">                           <!-- nowy div na result czyli sam wynik -->
+<textarea id="res" rows="1" cols="60">
+</textarea>
+</div>
+
+<div class="box6">
+<textarea id="result" rows="15" cols="60">
+</textarea>
+</div>
+
+
+<div class="box5">
+<ul><li><a href="#" class="round green" id="convert" type="button" style="text-align: center; font-size: 14px;"> convert !<span class="round">If you want<br> to see <br> the result :)</span></a></li></ul>
+</div>
+
+
+<div class="box7">
+<form action="...">
+	<input id="value" type="text" name="liczba" />
+</form> </div>
+
+<div class="box8">
+<form action="...">
+	<select name="rodzaj" id="unity_type">
+		<<option></option>
+		<option>temperature</option>
+		<option>lenght</option>
+		<option>measure</option>
+		<option>money</option>
+		<option>weight</option>
+	</select>
+</form> </div>
+
+<div class="box12">
+<hr />
+</div>
+
+<div class="box13">
+<a name="about"><p style="color: #AB206A;">This web calculator allows you to convert old units such as: danish rod, foot, elbow, prussian okseft, log, stone and others.
+</p></a>
+</div>
+
+<div class="box14">
+<hr />
+</div>
+
+
+
+
+</div> </center>
+
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+
+		$('#unity_type').change(function (event) {
+
+			$.get('/units?type=' + $(event.target).val()).done(function (data) {
+				var unit_list = data.unit_list;
+				$('#units_from').empty()  // wyczyszczam zawartosc selecta jesli zmieniam kilka razy
+				$('#units_to').empty()  // wyczyszczam zawartosc selecta jesli zmieniam kilka razy
+
+
+				$.each(unit_list, function (index, element) {
+	  	    $('#units_from').append("<option>" + element + "</option>")
+					  $('#units_to').append("<option>" + element + "</option>")
+	      });
+			})
+
+
+    })
+                
+
+                $(document).keyup(function (event) {
+                    console.log(event.keyCode);
+										var value = $('#value').val();
+										var from = $('#units_from').val();
+										var to = $('#units_to').val();
+
+										$.get('/convert?value=' + parseFloat(value) + "&from=" + from + "&to=" + to).done(function (data) {
+											if (data.result !== null) {
+											        $('#res').val((data.result).toFixed(2));
+											}
+											var msg = "";
+											msg += data.unit_from + ": " + data.desc_from + "\n\n" + data.unit_to + ": " + data.desc_to;
+											$('#result').val(msg);
+										})
+                })
+
+		$('#convert').click(function (event) {
+			var value = $('#value').val();
+			var from = $('#units_from').val();
+			var to = $('#units_to').val();
+
+			$.get('/convert?value=' + parseFloat(value) + "&from=" + from + "&to=" + to).done(function (data) {
+				if (data.result !== null) {
+				        $('#res').val((data.result).toFixed(2));
+				}
+				var msg = "";
+				msg += data.unit_from + ": " + data.desc_from + "\n\n" + data.unit_to + ": " + data.desc_to;
+				$('#result').val(msg);
+			})
+
+		})
+		// $('#unit_types').change(function (event) {
+
+	    // var value = $(event.target).val()
+
+      // if (value === "temperature") {
+     // 	  var units = ['Celsjusz', 'Kelvin', 'Fahrenheit', 'Rankine'];
+      // } else if (value === "money") {
+  	  //   var units = ['Dong', 'Euro', 'Złoty'];
+      // } else if (value === "weight") {
+  	  //   var units = ['Na koniec noża', 'Log', 'Litr', 'Mililitr', 'Cetnar', 'Kilo'];
+      // } else if (value === "lenght") {
+  	  //   var units = ['Sążeń', 'Łokieć krakowski', 'Stopa', 'Mila lądowa', 'Mila morska', 'Pręt duński', 'Kilometr', 'Centymetr', 'Metr'];
+			// }
+
+	    // $('#units').empty()  // czyszcze zawartosc selecta jesli zmieniam kilka razy
+
+	</script>
+
+</body>
+</html>
